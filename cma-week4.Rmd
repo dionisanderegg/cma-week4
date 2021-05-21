@@ -41,8 +41,11 @@ my_age("1991-11-16", units = "hours")   # Still, other units than default are po
 ## Task 1: Write your own functions
 Creating a function to taoculate the euclidian distance
 ```{r}
-euclidian_dist <- function(E, N) {
-  sqrt((E-lead(E))^2, (N-lead(N))^2)
+euclidian_dist <- function(E.x, E.y, N.x, N.y) {
+  sqrt((E.x-E.y)^2 + (N.x-N.y)^2)
+}
+euclidian_dist_lead <- function(E, N) {
+  sqrt((E-lead(E))^2 + (N-lead(N))^2)
 }
 ```
 
@@ -64,3 +67,17 @@ Crate a rouded data for every 15 minutes => This will be the join key.
 ```{r}
 data.filter$DatetimeUTC <- round_date(data.filter$DatetimeUTC, unit = "15 minutes")
 ```
+
+
+## Task 4: Measuring distance at cuncurrent locations
+Create two datasets (one per animal), and join the datasets by DateTimeUTC.
+Calculate the euclidian distance between the two individuals, using the previously definded function.
+```{r}
+data.filter.sabi <- filter(data.filter, TierName == "Sabi")
+data.filter.rosa <- filter(data.filter, TierName == "Rosa")
+
+data.join <- left_join(data.filter.sabi, data.filter.rosa, by = "DatetimeUTC", suffix = c("Sabi", "Rosa"))
+data.join$distance <- euclidian_dist(data.join$ESabi, data.join$ERosa, data.join$NSabi, data.join$NRosa)
+```
+
+

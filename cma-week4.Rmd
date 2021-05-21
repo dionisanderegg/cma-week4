@@ -78,6 +78,22 @@ data.filter.rosa <- filter(data.filter, TierName == "Rosa")
 
 data.join <- left_join(data.filter.sabi, data.filter.rosa, by = "DatetimeUTC", suffix = c("Sabi", "Rosa"))
 data.join$distance <- euclidian_dist(data.join$ESabi, data.join$ERosa, data.join$NSabi, data.join$NRosa)
+data.join$meeting <- ifelse(data.join$distance <=100, TRUE, FALSE)
+
+# Filter and gather the relevant data for visuailzation:
+data.join.vis %>%
+  select(DatetimeUTC, ERosa, NRosa, ESabi, NSabi, distance) +
+  gather()
+```
+
+## Task 5: Visualize Data
+```{r}
+ggplot(filter(data.join, distance < 3000)) +
+  geom_point(aes(ERosa, NRosa), col = "red",alpha = 0.1) +
+  geom_point(aes(ESabi, NSabi), col = "blue", alpha = 0.1) +
+  geom_point(aes(ERosa, NRosa, alpha = meeting), col = "black") +
+  labs() +
+  theme_bw()
 ```
 
 

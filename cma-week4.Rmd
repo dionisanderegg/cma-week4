@@ -1,0 +1,63 @@
+---
+title: "CMA - Exercise week 4"
+author: "Dionis Anderegg"
+date: "21 Mai 2021"
+output: html_document
+---
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(lubridate)
+```
+
+## Using Functions
+
+Create a test-function and run it:
+```{r}
+testfun <- function () {}
+testfun()         # NULL as this function doesn't give an output
+class(testfun)    # It is an element of class "function"
+```
+
+How to specify what the function does (use {})
+```{r}
+testfun <- function () {print("this function does nothing")}
+testfun()
+
+my_age <- function(birthday, units) {
+  difftime(Sys.time(), birthday, units = units)
+}
+my_age("1991-11-16", units = "days")
+
+# Use default values:
+my_age <- function(birthday, units = "days") {
+  difftime(Sys.time(), birthday, units = units)
+}
+my_age("1991-11-16")
+my_age("1991-11-16", units = "hours")   # Still, other units than default are possible.
+```
+
+## Task 1: Write your own functions
+Creating a function to taoculate the euclidian distance
+```{r}
+euclidian_dist <- function(E, N) {
+  sqrt((E-lead(E))^2, (N-lead(N))^2)
+}
+```
+
+## Task2: Prepare the analysis
+Import Dataset and filter it:
+We will only Use the individuals Rosa and Sabi for the timespan of 01.04.2015 - 15.04.2015
+```{r}
+raw <- read_delim("wildschwein_BE_2056.csv", delim = ",")
+summary(raw)
+
+data.filter <- raw %>%
+  filter(TierName == "Sabi" | TierName =="Rosa", 
+         DatetimeUTC >= as.POSIXct("2015-04-01", tz = "UTC"), 
+         DatetimeUTC <= as.POSIXct("2015-04-15", tz = "UTC"))
+```
+
+## Task 3: Create join key
+

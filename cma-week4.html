@@ -202,19 +202,61 @@ testfun()</code></pre>
   difftime(Sys.time(), birthday, units = units)
 }
 my_age(&quot;1991-11-16&quot;, units = &quot;days&quot;)</code></pre>
-<pre><code>## Time difference of 10779.41 days</code></pre>
+<pre><code>## Time difference of 10779.43 days</code></pre>
 <pre class="r"><code># Use default values:
 my_age &lt;- function(birthday, units = &quot;days&quot;) {
   difftime(Sys.time(), birthday, units = units)
 }
 my_age(&quot;1991-11-16&quot;)</code></pre>
-<pre><code>## Time difference of 10779.41 days</code></pre>
+<pre><code>## Time difference of 10779.43 days</code></pre>
 <pre class="r"><code>my_age(&quot;1991-11-16&quot;, units = &quot;hours&quot;)   # Still, other units than default are possible.</code></pre>
-<pre><code>## Time difference of 258705.9 hours</code></pre>
+<pre><code>## Time difference of 258706.4 hours</code></pre>
 </div>
 <div id="task-1-write-your-own-functions" class="section level2">
 <h2>Task 1: Write your own functions</h2>
 <p>Creating a function to taoculate the euclidian distance</p>
+<pre class="r"><code>euclidian_dist &lt;- function(E, N) {
+  sqrt((E-lead(E))^2, (N-lead(N))^2)
+}</code></pre>
+</div>
+<div id="task2-prepare-the-analysis" class="section level2">
+<h2>Task2: Prepare the analysis</h2>
+<p>Import Dataset and filter it: We will only Use the individuals Rosa and Sabi for the timespan of 01.04.2015 - 15.04.2015</p>
+<pre class="r"><code>raw &lt;- read_delim(&quot;wildschwein_BE_2056.csv&quot;, delim = &quot;,&quot;)</code></pre>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   TierID = col_character(),
+##   TierName = col_character(),
+##   CollarID = col_double(),
+##   DatetimeUTC = col_datetime(format = &quot;&quot;),
+##   E = col_double(),
+##   N = col_double()
+## )</code></pre>
+<pre class="r"><code>summary(raw)</code></pre>
+<pre><code>##     TierID            TierName            CollarID    
+##  Length:51246       Length:51246       Min.   :12275  
+##  Class :character   Class :character   1st Qu.:12275  
+##  Mode  :character   Mode  :character   Median :13972  
+##                                        Mean   :13219  
+##                                        3rd Qu.:13974  
+##                                        Max.   :13974  
+##   DatetimeUTC                        E                 N          
+##  Min.   :2014-08-22 21:00:12   Min.   :2568153   Min.   :1202306  
+##  1st Qu.:2015-02-20 12:18:57   1st Qu.:2569511   1st Qu.:1204825  
+##  Median :2015-04-08 20:00:10   Median :2569964   Median :1205210  
+##  Mean   :2015-03-24 23:09:22   Mean   :2570330   Mean   :1205227  
+##  3rd Qu.:2015-06-01 05:45:13   3rd Qu.:2570465   3rd Qu.:1206005  
+##  Max.   :2015-07-27 11:00:14   Max.   :2575154   Max.   :1207609</code></pre>
+<pre class="r"><code>data.filter &lt;- raw %&gt;%
+  filter(TierName == &quot;Sabi&quot; | TierName ==&quot;Rosa&quot;, 
+         DatetimeUTC &gt;= as.POSIXct(&quot;2015-04-01&quot;, tz = &quot;UTC&quot;), 
+         DatetimeUTC &lt;= as.POSIXct(&quot;2015-04-15&quot;, tz = &quot;UTC&quot;))</code></pre>
+</div>
+<div id="task-3-create-join-key" class="section level2">
+<h2>Task 3: Create join key</h2>
+<p>Crate a rouded data for every 15 minutes =&gt; This will be the join key.</p>
+<pre class="r"><code>data.filter$DatetimeUTC &lt;- round_date(data.filter$DatetimeUTC, unit = &quot;15 minutes&quot;)</code></pre>
 </div>
 
 

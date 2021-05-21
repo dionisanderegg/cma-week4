@@ -60,4 +60,7 @@ data.filter <- raw %>%
 ```
 
 ## Task 3: Create join key
-
+Crate a rouded data for every 15 minutes => This will be the join key.
+```{r}
+data.filter$DatetimeUTC <- round_date(data.filter$DatetimeUTC, unit = "15 minutes")
+```

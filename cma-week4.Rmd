@@ -9,6 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(lubridate)
+library(plotly)
 ```
 
 ## Using Functions
@@ -81,19 +82,31 @@ data.join$distance <- euclidian_dist(data.join$ESabi, data.join$ERosa, data.join
 data.join$meeting <- ifelse(data.join$distance <=100, TRUE, FALSE)
 
 # Filter and gather the relevant data for visuailzation:
-data.join.vis %>%
-  select(DatetimeUTC, ERosa, NRosa, ESabi, NSabi, distance) +
-  gather()
+data.join.vis <- data.join %>%
+  select(DatetimeUTC, ERosa, NRosa, ESabi, NSabi, distance, meeting)
+
+data.join.vis <- gather(data.join.vis, TierE, E, ERosa, ESabi)
+data.join.vis <- gather(data.join.vis, TierN , N, NRosa, NSabi)
+
+data.join.vis$Tier <- ifelse(data.join.vis$TierE == "ERosa", "Rosa", "Sabi")
+
 ```
 
 ## Task 5: Visualize Data
 ```{r}
-ggplot(filter(data.join, distance < 3000)) +
-  geom_point(aes(ERosa, NRosa), col = "red",alpha = 0.1) +
-  geom_point(aes(ESabi, NSabi), col = "blue", alpha = 0.1) +
-  geom_point(aes(ERosa, NRosa, alpha = meeting), col = "black") +
+ggplot(filter(data.join.vis, distance < 3000), aes (E, N, fill = Tier, col = meeting)) +
+  geom_point(alpha = 0.30, shape = 21) +
   labs() +
+  scale_color_manual(values = c("white", "black")) +
   theme_bw()
+```
+
+Die Tiere haben sich einige Male an jeweils ähnichen Orten getroffen. Zwecks übersichtlichkeit werden im obigen Plot nur Standorte mit einer Distanz von < 3000 m zwischen den Tieren abgebildet.
+
+
+## Task 6: Visualize data as timecube with plotly
+```{r}
+plot_ly(data.join.vis, x = ~E, y = ~N, z = ~DatetimeUTC, type = "scatter3d", mode = "lines", color = ~Tier)
 ```
 
 
